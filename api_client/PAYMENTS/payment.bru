@@ -1,0 +1,18 @@
+meta {
+  name: payment
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://ticketing.dev/api/payments
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "token": "tok_visa",
+    "orderId": "6741c80ec724f72984bfdc70"
+  }
+}

@@ -1,0 +1,18 @@
+meta {
+  name: create ticket
+  type: http
+  seq: 1
+}
+
+post {
+  url: https://ticketing.dev/api/tickets
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "movie_new",
+    "price": 999
+  }
+}

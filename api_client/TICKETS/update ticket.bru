@@ -1,0 +1,22 @@
+meta {
+  name: update ticket
+  type: http
+  seq: 2
+}
+
+put {
+  url: https://ticketing.dev/api/tickets/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: 66f7bef631b27b78a8af5900
+}
+
+body:json {
+  {
+    "title": "movi",
+    "price": 999
+  }
+}

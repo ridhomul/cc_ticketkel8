@@ -1,0 +1,18 @@
+meta {
+  name: signout
+  type: http
+  seq: 4
+}
+
+get {
+  url: https://ticketing.dev/api/users/signout
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "email": "admin@ticketing.com",
+    "password": "1234567890"
+  }
+}

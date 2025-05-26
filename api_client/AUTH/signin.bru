@@ -1,0 +1,18 @@
+meta {
+  name: signin
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://ticketing.dev/api/users/signin
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "admin@ticketing.com",
+    "password": "1234567890"
+  }
+}
