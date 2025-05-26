@@ -1,0 +1,70 @@
+name: deploy-payments
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'payments/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+      OKE_CLUSTER_ID: ${{ secrets.OKE_CLUSTER_ID }}
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: DOCKER BUILD
+        run: cd payments && docker build -t ridhomul/payments .
+      
+      - name: DOCKER LOGIN
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: DOCKER PUSH
+        run: docker push ridhomul/payments
+      
+      - name: Install OCI CLI
+        run: |
+          curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults
+        env:
+          HOME: /home/runner
+          
+      - name: Add OCI CLI to PATH
+        run: echo "/home/runner/bin" >> $GITHUB_PATH
+
+      - name: Generate kubeconfig for OKE Cluster
+        run: |
+          mkdir -p $HOME/.kube
+          oci ce cluster create-kubeconfig \
+            --cluster-id $OKE_CLUSTER_ID \
+            --file $HOME/.kube/config \
+            --region $OCI_CLI_REGION \
+            --token-version 2.0.0 \
+            --kube-endpoint PUBLIC_ENDPOINT
+
+      - name: Set Kubernetes Context
+        run: |
+          kubectl config use-context context-cnviah2vdba
+        env:
+          KUBECONFIG: /home/runner/.kube/config
+
+      - name: Test kubectl connection
+        run: |
+          kubectl get nodes
+        env:
+          KUBECONFIG: /home/runner/.kube/config
+      
+      - name: ROLLOUT TO PRO
+        run: kubectl rollout restart deployment payments-depl
+           
+          
+      

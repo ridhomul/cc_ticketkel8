@@ -1,0 +1,8 @@
+{
+    "cSpell.words": [
+        "ridhomul"
+    ],
+    "yaml.schemas": {
+        "kubernetes://schema/v1%40service": "file:///home/km12/Projects/micro_services_projects/ticketing_ms/infra/k8s/tickets-depl.yaml"
+    }
+}
